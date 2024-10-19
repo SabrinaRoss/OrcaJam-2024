@@ -1,5 +1,38 @@
 pico-8 cartridge // http://www.pico-8.com
 version 41
+__lua__
+function _draw()
+	cls()
+	circfill(x, y, radius, 8)
+	circfill(x+margin, y+margin, radius,10)
+	circfill(x-margin, y-margin, radius, 12)
+end
+
+function _update()
+	if (time() - last > .02) then
+		last = time()
+		x,y = shrink(x, y)
+		if radius == 0 then radius = 30 end
+	end
+end
+
+function _init()
+	x = 64
+	y = 64
+	margin = 40
+	radius = 20
+	angle = 0
+	last = time()
+end
+-->8
+// manipulation
+
+function shrink(x, y) 
+	radius -= 1
+	local new_x = x*cos(0) - y*sin(0)
+	local new_y = x*sin(0) + y*cos(0)
+	return new_x,new_y
+end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
