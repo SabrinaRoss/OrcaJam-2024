@@ -47,9 +47,7 @@ function reset_variables()
 	byte = 8
 	angle = 0
 	direction = 1
-	add_shape(x, y, radius, direction)
-	add_shape(x-10, y, radius, -direction)
-	add_shape(x+10, y, radius, -direction)
+	state_reset_shape()
 end
 
 function add_shape(x, y, radius, direction) 
@@ -58,21 +56,26 @@ function add_shape(x, y, radius, direction)
 		y = y,
 		radius = radius,
 		direction = direction,
-		col = rnd(15)
+		col = rnd(cols_i_like)
 	}
 	add(shapes, shape)
 end
 
-cols_i_like = {}
+cols_i_like = {8,9,10,11,12,14}
 //add a table of all the colours i want
 -->8
 // manipulation
 
-function shrink(x, y) 
-	radius -= 1
-	local new_x = x*cos(0) - y*sin(0)
-	local new_y = x*sin(0) + y*cos(0)
-	return new_x,new_y
+function shrink(radius,direction) 
+	local new_radius = radius - 1
+	if (new_radius <= 0) then direction *= -1 end
+	return new_radius,direction
+end
+
+function expand(radius,direction)
+	local new_radius = radius + 1
+	if (new_radius >= 20) then direction *= -1 end
+	return new_radius, direction
 end
 
 function bounce(x,y,direction)
@@ -101,7 +104,11 @@ end
 
 function state_machine_update() 
 		if (state == 1) then
-			x,y = shrink(x, y)
+			for s in all(shapes) do
+			if s.direction == 1 then s.radius,s.direction = shrink(s.radius,s.direction) end
+			if s.direction == -1 then s.radius,s.direction = expand(s.radius,s.direction) end
+			
+			end
 		end 
 		if (state == 2) then
 			for s in all(shapes) do
@@ -114,14 +121,40 @@ end
 
 function state_machine_draw() 
 	if (state == 1) then
-		circfill(x, y, radius, 8)
-		circfill(x+margin, y+margin, radius,10)
-		circfill(x-margin, y-margin, radius, 12)
+		for s in all(shapes) do
+		circfill(s.x,s.y,s.radius,s.col)
+		end
 	end
 	if (state == 2) then
 		for s in all(shapes) do
-		circfill(s.x,s.y,radius-15,s.col)
+		circfill(s.x,s.y,s.radius-15,s.col)
 		end
+	end
+end
+
+function state_reset_shape()
+	if (state == 1) then state_1_spawn() end
+	if (state == 2) then state_2_spawn() end
+end
+
+function state_1_spawn()
+	add_shape(x, y, radius, direction)
+	add_shape(x-margin, y-margin, radius, direction)
+	add_shape(x+margin, y+margin, radius, direction)
+	add_shape(x-margin, y+margin, radius, direction)
+	add_shape(x+margin, y-margin, radius, direction)
+end
+
+function state_2_spawn()
+	add_shape(x, y, radius, direction)
+	for i=1,6 do
+	if i % 2 == 0 then
+	add_shape(x-10*i, y, radius, direction)
+	add_shape(x+10*i, y, radius, direction)
+	else
+	add_shape(x-10*i, y, radius, -direction)
+	add_shape(x+10*i, y, radius, -direction)
+	end
 	end
 end
 -->8
