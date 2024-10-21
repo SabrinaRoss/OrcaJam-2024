@@ -1,7 +1,7 @@
 # OrcaJam-2024
-This is a repo for OrcaJam 2024 -> https://sabrina-ross.itch.io/rowans-world 
+This is a repo for OrcaJam 2024 -> https://sabrina-ross.itch.io/rowans-world  :
 
-called Rowan's World
+Rowan's World
 
 
 ![image](https://github.com/user-attachments/assets/feff6b09-d00b-4e1e-8fc6-93990f214706)
